@@ -2,7 +2,6 @@
 import { signIn } from "@/lib/auth-client";
 import Link from "next/link";
 import { useState } from "react";
-import logo from "@/public/logo.png"
 import { Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
+import Logo from "@/components/logo";
 
 const LoginUI = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,13 +33,7 @@ const LoginUI = () => {
       {/* Header (same pattern) */}
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
-          <Link href="#" className="flex items-center gap-1">
-            <Image width={26} height={26} src={logo} alt="logo" />
-            <span className="text-lg font-bold tracking-tight">
-              <span className="text-blue-500 font-extrabold text-xl">PR</span>
-              <span className="underline">izm</span>
-            </span>
-          </Link>
+          <Logo/>
 
           <div className="flex items-center gap-2">
             <Button variant="ghost" asChild>
