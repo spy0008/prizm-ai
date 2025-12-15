@@ -14,6 +14,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Logo from "@/components/logo";
 
+export const metadata = { title: "Login — Prizm" };
+
 const LoginUI = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +32,6 @@ const LoginUI = () => {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {/* Header (same pattern) */}
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
           <Logo/>
