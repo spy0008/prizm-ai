@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Logo from "@/components/logo";
 
-export const metadata = { title: "Privacy — Prizmai" };
+export const metadata = { title: "Privacy — Prizm" };
 
 export default function PrivacyPage() {
   return (
