@@ -4,7 +4,6 @@ import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { Moon, Sun, LogOut, Github } from "lucide-react";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Settings, Banknote, FileCheck } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
