@@ -1,0 +1,79 @@
+"use server";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/db";
+import { createWebhook, getRepositories } from "@/module/github/lib/github";
+import { headers } from "next/headers";
+
+export const fetchRepositories = async (
+  page: number = 1,
+  perPage: number = 10
+) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      throw new Error("Unauthorized user");
+    }
+
+    const githubRepos = await getRepositories(page, perPage);
+
+    const dbRepos = await prisma.repository.findMany({
+      where: {
+        userId: session.user.id,
+      },
+    });
+
+    const connetctedReposIds = new Set(dbRepos.map((repo) => repo.githubId));
+
+    return githubRepos.map((repo: any) => ({
+      ...repo,
+      isConnected: connetctedReposIds.has(BigInt(repo.id)),
+    }));
+  } catch (error) {
+    console.error("Error while fetchinh repo data: ", error);
+    return [];
+  }
+};
+
+export const connectRepository = async (
+  owner: string,
+  repo: string,
+  githubId: number
+) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    //todo: CHECK IF USER CAN CONNECT MORE REPO
+
+    const webhook = await createWebhook(owner, repo);
+
+    if (webhook) {
+      await prisma.repository.create({
+        data: {
+          githubId: BigInt(githubId),
+          name: repo,
+          owner,
+          fullName: `${owner}/${repo}`,
+          url: `https://github.com/${owner}/${repo}`,
+          userId: session.user.id,
+        },
+      });
+    }
+
+    //todo: INCREMENT REPO COUNT FOR USAGE TRACKING
+
+    //todo: TRIGGER REPO IDX FOR RAG
+
+    return webhook
+  } catch (error) {
+    console.error("Error while connecting repo: ", error)
+  }
+};

@@ -22,3 +22,9 @@ export type UserContributionsResponse = {
     };
   } | null;
 };
+
+export type UseRepoConnection = {
+  owner: string;
+  repo: string;
+  githubId: number
+};
