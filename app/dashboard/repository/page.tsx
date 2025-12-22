@@ -1,4 +1,5 @@
 "use client";
+import Header from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -108,25 +109,24 @@ const RepositoryPage = () => {
 
   const handleConnect = (repo: Repository) => {
     setLocalConnectingId(repo.id);
-    connectRepo({
-      owner: repo.full_name.split("/")[0],
-      repo: repo.name,
-      githubId: repo.id,
-    },
-    {
-      onSettled: () => setLocalConnectingId(null)
-    }
-  );
+    connectRepo(
+      {
+        owner: repo.full_name.split("/")[0],
+        repo: repo.name,
+        githubId: repo.id,
+      },
+      {
+        onSettled: () => setLocalConnectingId(null),
+      }
+    );
   };
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Repositories</h1>
-        <p className="text-muted-foreground">
-          Manage and checkout all your Github Repositories:
-        </p>
-      </div>
+      <Header
+        title="Repositories"
+        description="Manage and checkout all your Github Repositories:"
+      />
 
       <div className="relative">
         <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
@@ -189,7 +189,7 @@ const RepositoryPage = () => {
                     <span className="text-sm font-medium">
                       {repo.stargazers_count}
                     </span>
-                     {repo.isConnected && (
+                    {repo.isConnected && (
                       <Badge variant="secondary">Connected</Badge>
                     )}
                   </div>

@@ -16,6 +16,7 @@ import { FileCheck, GitBranch, GitCommit, GitPullRequest } from "lucide-react";
 import ContributionGraph from "@/module/dashboard/components/contribution-graph";
 import { Spinner } from "@/components/ui/spinner";
 import BarGraph from "@/module/dashboard/components/bar-graph";
+import Header from "@/components/header";
 
 const Dashboard = () => {
   const { data: stats, isLoading } = useQuery({
@@ -32,12 +33,10 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Snapshot of Your AI Review Activity:
-        </p>
-      </div>
+      <Header
+        title="Dashboard"
+        description="Snapshot of Your AI Review Activity:"
+      />
 
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard
