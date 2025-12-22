@@ -6,6 +6,7 @@ import {
   ContributionCalendar,
   UserContributionsResponse,
 } from "@/types/apiType";
+import { data } from "motion/react-client";
 
 // Getting the GitHub access token
 export const getGithubToken = async () => {
@@ -73,5 +74,61 @@ export const fetchUserontributions = async (
   } catch (error) {
     console.error("Error fetching contributions:", error);
     return null;
+  }
+};
+
+export const getRepositories = async (
+  page: number = 1,
+  perPage: number = 10
+) => {
+  try {
+    const token = await getGithubToken();
+    const octokit = new Octokit({ auth: token });
+
+    const { data } = await octokit.rest.repos.listForAuthenticatedUser({
+      sort: "updated",
+      direction: "desc",
+      visibility: "all",
+      per_page: perPage,
+      page,
+    });
+
+    return data;
+  } catch (error) {
+    console.log("Error while getRepositories data from github: ", error);
+    return [];
+  }
+};
+
+export const createWebhook = async (owner: string, repo: string) => {
+  try {
+    const token = await getGithubToken();
+    const octokit = new Octokit({ auth: token });
+    const webhookUrl = `${process.env.NEXT_PUBLIC_APP_BASE_URL}/api/webhooks/github`;
+
+    const { data: hooks } = await octokit.rest.repos.listWebhooks({
+      owner,
+      repo,
+    });
+
+    const exitingHook = hooks.find((hook) => hook.config.url === webhookUrl);
+
+    if (exitingHook) {
+      return exitingHook;
+    }
+
+    const { data } = await octokit.rest.repos.createWebhook({
+      owner,
+      repo,
+      config: {
+        url: webhookUrl,
+        content_type: "json",
+      },
+      events: ["pull_request"],
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Error while webhook call: ", error)
   }
 };

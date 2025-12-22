@@ -69,7 +69,7 @@ const LoginUI = () => {
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <Button onClick={handleGithubLogin} className="w-full cursor-pointer" asChild>
+              <Button disabled={isLoading} onClick={handleGithubLogin} className="w-full cursor-pointer" asChild>
                 <span >
                   <Github className="mr-2 h-4 w-4" />
                 { isLoading ? "Signing..." : "Sign in with GitHub"}
