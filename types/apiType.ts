@@ -28,3 +28,8 @@ export type UseRepoConnection = {
   repo: string;
   githubId: number
 };
+
+export type updateUserProfileType = {
+  name?: string;
+  email?: string;
+}
