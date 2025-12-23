@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import {
   ContributionCalendar,
   UserContributionsResponse,
+  webhookType,
 } from "@/types/apiType";
 import { data } from "motion/react-client";
 
@@ -77,6 +78,7 @@ export const fetchUserontributions = async (
   }
 };
 
+// Getting the user GitHub Repositories
 export const getRepositories = async (
   page: number = 1,
   perPage: number = 10
@@ -100,6 +102,7 @@ export const getRepositories = async (
   }
 };
 
+// create webhook
 export const createWebhook = async (owner: string, repo: string) => {
   try {
     const token = await getGithubToken();
@@ -129,6 +132,37 @@ export const createWebhook = async (owner: string, repo: string) => {
 
     return data;
   } catch (error) {
-    console.error("Error while webhook call: ", error)
+    console.error("Error while create webhook: ", error);
+  }
+};
+
+//delete webhook
+export const deleteWebhook = async (owner: string, repo: string) => {
+  try {
+    const token = await getGithubToken();
+    const octokit = new Octokit({ auth: token });
+
+    const webhookUrl = `${process.env.NEXT_PUBLIC_APP_BASE_URL}/api/webhooks/github`;
+
+    const { data: hooks } = await octokit.rest.repos.listWebhooks({
+      owner,
+      repo,
+    });
+
+    const hookToDelete = hooks.find((hook) => hook.config.url === webhookUrl);
+
+    if (hookToDelete) {
+      await octokit.rest.repos.deleteWebhook({
+        owner,
+        repo,
+        hook_id: hookToDelete.id,
+      });
+
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error("Error while deleting webhook: ", error);
   }
 };

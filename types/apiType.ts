@@ -23,6 +23,11 @@ export type UserContributionsResponse = {
   } | null;
 };
 
+export type webhookType = {
+  owner: string;
+  repo: string;
+};
+
 export type UseRepoConnection = {
   owner: string;
   repo: string;
