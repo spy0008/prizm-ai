@@ -3,7 +3,7 @@ const CodeCard = () => {
     <div className="rounded-2xl border border-foreground/20 bg-background p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <div className="text-sm font-semibold text-foreground/90">PR Review (example)</div>
-        <span className="text-xs text-foreground/50">prizmai-bot</span>
+        <span className="text-xs text-foreground/50">PRizmai-bot</span>
       </div>
 
       <div className="space-y-3 text-sm">

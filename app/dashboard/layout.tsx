@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import AppSidebar from "@/components/app-sidebar";
 import { requireAuth } from "@/module/auth/utils/auth-utils";
 
-export const metadata = { title: "Dashboard — Prizm" };
+export const metadata = { title: "Dashboard — PRizm" };
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   await requireAuth();
