@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Logo from "@/components/logo";
 
-export const metadata = { title: "Terms — Prizmai" };
+export const metadata = { title: "Terms — PRizmai" };
 
 export default function TermsPage() {
   return (
@@ -29,7 +29,7 @@ export default function TermsPage() {
             </CardHeader>
             <CardContent className="space-y-4 text-sm text-muted-foreground">
               <p>
-                These Terms govern access to Prizmai and related services. Use of the service means agreement to these Terms.
+                These Terms govern access to PRizmai and related services. Use of the service means agreement to these Terms.
               </p>
               <p>
                 This page is a starter template and should be reviewed by qualified legal counsel before production use.
@@ -63,8 +63,8 @@ export default function TermsPage() {
             <h2 className="text-base font-semibold">Contact</h2>
             <p className="text-muted-foreground">
               For questions about these Terms, email{" "}
-              <Link className="underline underline-offset-4" href="mailto:support@prizm.com">
-                support@prizm.com
+              <Link className="underline underline-offset-4" href="mailto:support@PRizm.com">
+                support@PRizm.com
               </Link>
               .
             </p>

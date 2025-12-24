@@ -27,7 +27,7 @@ export const features = [
 
 export const faqs = [
   {
-    q: "Does Prizmai replace human code review?",
+    q: "Does PRizmai replace human code review?",
     a: "No. It reduces review load and catches issues early, while humans focus on architecture and product decisions.",
   },
   {
@@ -48,12 +48,12 @@ export const howtouse = [
   {
     step: "01",
     title: "Connect your repo",
-    desc: "Install Prizmai for your org/repo and choose when it should review.",
+    desc: "Install PRizmai for your org/repo and choose when it should review.",
   },
   {
     step: "02",
     title: "Open a PR",
-    desc: "Prizmai analyzes the diff and adds a summary + prioritized feedback.",
+    desc: "PRizmai analyzes the diff and adds a summary + prioritized feedback.",
   },
   {
     step: "03",

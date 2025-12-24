@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Logo from "@/components/logo";
 
-export const metadata = { title: "Privacy — Prizm" };
+export const metadata = { title: "Privacy — PRizm" };
 
 export default function PrivacyPage() {
   return (
@@ -62,8 +62,8 @@ export default function PrivacyPage() {
             <h2 className="text-base font-semibold">Contact</h2>
             <p className="text-muted-foreground">
               Privacy questions:{" "}
-              <Link className="underline underline-offset-4" href="mailto:support@prizm.com">
-                support@prizm.com
+              <Link className="underline underline-offset-4" href="mailto:support@PRizm.com">
+                support@PRizm.com
               </Link>
               .
             </p>
