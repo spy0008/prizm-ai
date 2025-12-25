@@ -31,10 +31,17 @@ export type webhookType = {
 export type UseRepoConnection = {
   owner: string;
   repo: string;
-  githubId: number
+  githubId: number;
 };
 
 export type updateUserProfileType = {
   name?: string;
   email?: string;
-}
+};
+
+export type getRepoFileContentsTypes = {
+  token: string;
+  owner: string;
+  repo: string;
+  path?: string;
+};

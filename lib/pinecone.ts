@@ -5,4 +5,4 @@ export const pinecone = new Pinecone({
 });
 
 
-export const pineconeIndex = pinecone.Index("prizm-vector-embading")
+export const pineconeIndex = pinecone.Index("prizm-vector-embedding-v1")

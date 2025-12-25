@@ -4,10 +4,9 @@ import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import {
   ContributionCalendar,
+  getRepoFileContentsTypes,
   UserContributionsResponse,
-  webhookType,
 } from "@/types/apiType";
-import { data } from "motion/react-client";
 
 // Getting the GitHub access token
 export const getGithubToken = async () => {
@@ -166,3 +165,76 @@ export const deleteWebhook = async (owner: string, repo: string) => {
     console.error("Error while deleting webhook: ", error);
   }
 };
+
+// fetch repo files
+export async function getRepoFileContents({
+  token,
+  owner,
+  repo,
+  path = "",
+}: getRepoFileContentsTypes): Promise<{ path: string; content: string }[]> {
+  const octokit = new Octokit({ auth: token });
+
+  try {
+    const { data: repoData } = await octokit.rest.repos.get({
+      owner,
+      repo,
+    });
+    const defaultBranch = repoData.default_branch;
+
+   
+    const { data: tree } = await octokit.rest.git.getTree({
+      owner,
+      repo,
+      tree_sha: defaultBranch,
+      recursive: "1" as const, 
+    });
+
+   
+    const isTextFile = (filePath: string) =>
+      !/\.(png|jpg|jpeg|gif|svg|ico|pdf|zip|tar|gz|exe|dmg|bin)$/i.test(filePath);
+
+    const textFilePaths = tree.tree
+      .filter((item: any) => item.type === "blob") 
+      .filter((item: any) => isTextFile(item.path))
+      .map((item: any) => item.path);
+
+  
+    const files: { path: string; content: string }[] = [];
+    const chunkSize = 10; 
+
+    for (let i = 0; i < textFilePaths.length; i += chunkSize) {
+      const chunk = textFilePaths.slice(i, i + chunkSize);
+      
+      const chunkPromises = chunk.map(async (filePath) => {
+        try {
+          const { data } = await octokit.rest.repos.getContent({
+            owner,
+            repo,
+            path: filePath,
+          });
+
+          if (!Array.isArray(data) && data.type === "file" && data.content) {
+            return {
+              path: data.path!,
+              content: Buffer.from(data.content, "base64").toString("utf-8"),
+            };
+          }
+        } catch (error) {
+          console.warn(`Failed to fetch ${filePath}:`, error);
+        }
+        return null;
+      });
+
+      const chunkFiles = (await Promise.all(chunkPromises)).filter(
+        (file): file is { path: string; content: string } => file !== null
+      );
+      files.push(...chunkFiles);
+    }
+
+    return files;
+  } catch (error) {
+    console.error(`Failed to fetch repo contents for ${owner}/${repo}:`, error);
+    throw new Error(`Unable to fetch repository contents: ${error}`);
+  }
+}

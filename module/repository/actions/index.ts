@@ -1,4 +1,5 @@
 "use server";
+import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { createWebhook, getRepositories } from "@/module/github/lib/github";
@@ -70,10 +71,21 @@ export const connectRepository = async (
 
     //todo: INCREMENT REPO COUNT FOR USAGE TRACKING
 
-    //todo: TRIGGER REPO IDX FOR RAG
+    try {
+      await inngest.send({
+        name: "repository.connected",
+        data: {
+          owner,
+          repo,
+          userId: session.user.id,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to trigger repository indexing: ", error);
+    }
 
-    return webhook
+    return webhook;
   } catch (error) {
-    console.error("Error while connecting repo: ", error)
+    console.error("Error while connecting repo: ", error);
   }
 };
