@@ -4,7 +4,7 @@ import { indexCodebase } from "@/module/ai/lib/rag";
 import { getRepoFileContents } from "@/module/github/lib/github";
 
 export const indexRepo = inngest.createFunction(
-  { id: "index-repo",name: "Index Repository Codebase" },
+  { id: "index-repo", name: "Index Repository Codebase" },
   { event: "repository.connected" },
 
   async ({ event, step }) => {
