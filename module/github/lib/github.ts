@@ -4,7 +4,9 @@ import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import {
   ContributionCalendar,
+  getPullRequestDiffType,
   getRepoFileContentsTypes,
+  postReviewCommentType,
   UserContributionsResponse,
 } from "@/types/apiType";
 
@@ -182,30 +184,29 @@ export async function getRepoFileContents({
     });
     const defaultBranch = repoData.default_branch;
 
-   
     const { data: tree } = await octokit.rest.git.getTree({
       owner,
       repo,
       tree_sha: defaultBranch,
-      recursive: "1" as const, 
+      recursive: "1" as const,
     });
 
-   
     const isTextFile = (filePath: string) =>
-      !/\.(png|jpg|jpeg|gif|svg|ico|pdf|zip|tar|gz|exe|dmg|bin)$/i.test(filePath);
+      !/\.(png|jpg|jpeg|gif|svg|ico|pdf|zip|tar|gz|exe|dmg|bin)$/i.test(
+        filePath
+      );
 
     const textFilePaths = tree.tree
-      .filter((item: any) => item.type === "blob") 
+      .filter((item: any) => item.type === "blob")
       .filter((item: any) => isTextFile(item.path))
       .map((item: any) => item.path);
 
-  
     const files: { path: string; content: string }[] = [];
-    const chunkSize = 10; 
+    const chunkSize = 10;
 
     for (let i = 0; i < textFilePaths.length; i += chunkSize) {
       const chunk = textFilePaths.slice(i, i + chunkSize);
-      
+
       const chunkPromises = chunk.map(async (filePath) => {
         try {
           const { data } = await octokit.rest.repos.getContent({
@@ -238,3 +239,70 @@ export async function getRepoFileContents({
     throw new Error(`Unable to fetch repository contents: ${error}`);
   }
 }
+
+// get PR Diff (new change in file)
+export async function getPullRequestDiff({
+  token,
+  owner,
+  repo,
+  prNumber,
+}: getPullRequestDiffType) {
+  try {
+    const octokit = new Octokit({ auth: token });
+
+    const { data: pr } = await octokit.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: prNumber,
+    });
+
+    const { data: diff } = await octokit.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: prNumber,
+      mediaType: {
+        format: "diff",
+      },
+    });
+
+    return {
+      diff: diff as unknown as string,
+      title: pr.title,
+      description: pr.body || "",
+    };
+  } catch (error) {
+    console.error("Error while getting PR Diff: ", error);
+  }
+}
+
+// create post PR review comment
+export async function postReviewComment({
+  token,
+  owner,
+  repo,
+  prNumber,
+  review,
+}: postReviewCommentType) {
+  const octokit = new Octokit({ 
+    auth: token,
+    userAgent: 'PRizmAI/1.0.0'
+  });
+
+  try {
+    await octokit.rest.issues.createComment({
+      owner,
+      repo,
+      issue_number: prNumber,
+      body: `##  PRizm AI Code Review\n\n${review}\n\n---\n*Powered by PRizm*`
+    });
+  } catch (error) {
+    console.error("postReviewComment API error:", {
+      owner, repo, prNumber, 
+      tokenLength: token.length,
+      error: error
+    });
+    throw error;
+  }
+}
+
+

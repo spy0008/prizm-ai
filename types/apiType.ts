@@ -45,3 +45,24 @@ export type getRepoFileContentsTypes = {
   repo: string;
   path?: string;
 };
+
+export type reviewPullRequestType = {
+  owner: string;
+  repo: string;
+  prNumber: number;
+};
+
+export type getPullRequestDiffType = {
+  token: string;
+  owner: string;
+  repo: string;
+  prNumber: number;
+};
+
+export type postReviewCommentType = {
+  token: string;
+  owner: string;
+  repo: string;
+  prNumber: number;
+  review: string;
+};

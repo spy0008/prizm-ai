@@ -1,3 +1,4 @@
+import { reviewPullRequest } from "@/module/ai/actions";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -14,6 +15,23 @@ export async function POST(req: NextRequest) {
           status: 200,
         }
       );
+    }
+
+    if (event === "pull_request") {
+      const action = body.action;
+      const repo = body.repository.full_name;
+      const prNumber = body.pull_request?.number;
+
+
+      const [owner, repoName] = repo.split("/");
+
+      if (action === "opened" || action === "synchronize") {
+        reviewPullRequest({ owner, repo: repoName, prNumber: prNumber })
+          .then(() => console.log(`review completed for ${repo} #${prNumber}`))
+          .catch((error) =>
+            console.log(`review failed for ${repo} #${prNumber}: `, error)
+          );
+      }
     }
 
     //tod: HANDLE LATER
@@ -37,4 +55,4 @@ export async function POST(req: NextRequest) {
       }
     );
   }
-};
+}
