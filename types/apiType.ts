@@ -66,3 +66,23 @@ export type postReviewCommentType = {
   prNumber: number;
   review: string;
 };
+
+// patyment and user tracking types
+export type subscriptionTierType = "FREE" | "PRO";
+export type subscriptionStatusType = "ACTIVE" | "CANCELLED" | "EXPIRED";
+
+export interface userLimits {
+  tier: subscriptionTierType;
+  repositories: {
+    current: number;
+    limit: number | null; // null = unlimited
+    canAdd: boolean;
+  };
+  reviews: {
+    [repositoryId: string]: {
+      current: number;
+      limit: number | null; // null = unlimited
+      canAdd: boolean;
+    };
+  };
+}
