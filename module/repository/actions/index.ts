@@ -2,6 +2,7 @@
 import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { proRepoLimiter, repoLimiter } from "@/lib/rate-limit";
 import { createWebhook, getRepositories } from "@/module/github/lib/github";
 import {
   canConnectRepository,
@@ -56,7 +57,29 @@ export const connectRepository = async (
       throw new Error("Unauthorized");
     }
 
-    const canConnect = await canConnectRepository(session.user.id);
+    const userId = session.user.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscriptionTier: true },
+    });
+
+    const isPro = user?.subscriptionTier === "PRO";
+    const limiter = isPro ? proRepoLimiter : repoLimiter;
+
+    const { success, remaining, retryAfter } = await limiter(userId);
+
+    if (!success) {
+      throw new Error(
+        isPro
+          ? `Rate limited. Try again in ${retryAfter}s.`
+          : `Free limit reached (${
+              5 - remaining
+            }/hour). Upgrade to Pro for 100x more! Retry in ${retryAfter}s`
+      );
+    }
+
+    const canConnect = await canConnectRepository(userId);
 
     if (!canConnect) {
       throw new Error(
@@ -93,7 +116,16 @@ export const connectRepository = async (
         console.error("Failed to trigger repository indexing: ", error);
       }
     }
-    return webhook;
+
+    return {
+      success: true,
+      webhook,
+      rateLimit: {
+        remaining,
+        isPro,
+        nextReset: Math.floor(Date.now() / 3600000 + 1) * 3600000,
+      },
+    };
   } catch (error) {
     console.error("Error while connecting repo: ", error);
   }

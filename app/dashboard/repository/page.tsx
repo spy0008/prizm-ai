@@ -16,6 +16,7 @@ import { useRepositories } from "@/module/repository/hooks/use-repositories";
 import { ExternalLink, Star, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 interface Repository {
   id: number;
@@ -109,6 +110,7 @@ const RepositoryPage = () => {
 
   const handleConnect = (repo: Repository) => {
     setLocalConnectingId(repo.id);
+
     connectRepo(
       {
         owner: repo.full_name.split("/")[0],
@@ -116,6 +118,25 @@ const RepositoryPage = () => {
         githubId: repo.id,
       },
       {
+        onSuccess: (data) => {
+          toast.success(
+            `✅ ${repo.name} connected! 
+           ${data?.rateLimit?.remaining ?? "?"} left this hour`
+          );
+        },
+        onError: (error: any) => {
+          toast.error(error.message);
+
+          if (error.message?.includes("limit")) {
+            toast("⚡ Pro: 100 connections/hour vs Free: 5/hour", {
+              action: {
+                label: "Upgrade",
+                onClick: () => (window.location.href = "/subscription"),
+              },
+              duration: 10000,
+            });
+          }
+        },
         onSettled: () => setLocalConnectingId(null),
       }
     );
