@@ -56,7 +56,7 @@ export default async function Home() {
               </h1>
 
               <p className="mt-4 text-base leading-relaxed text-foreground/70 md:text-lg">
-                PRizmai summarizes changes, flags risky code, and leaves
+                PRizm summarizes changes, flags risky code, and leaves
                 actionable review comments so developers stay in flow and
                 businesses ship with confidence.
               </p>
@@ -157,14 +157,6 @@ export default async function Home() {
               ))}
             </div>
 
-            <div className="mt-8 hover:shadow-2xl rounded-2xl border border-foreground/20 bg-foreground/5 p-6">
-              <div className="text-sm font-semibold">Tip</div>
-              <p className="mt-2 text-sm text-foreground/70">
-                If you plan to publish on GitHub Marketplace later, you&apos;ll
-                likely need basics like a clear description and a privacy
-                policy/support link good to plan early.
-              </p>
-            </div>
           </div>
         </Container>
       </section>
@@ -216,7 +208,7 @@ export default async function Home() {
 
           <footer className="mt-10 flex flex-col gap-3 border-t border-foreground/20 pt-6 text-xs text-foreground/60 md:flex-row md:items-center md:justify-between">
             <div>
-              © {new Date().getFullYear()} PRizmai. All rights reserved.
+              © {new Date().getFullYear()} PRizm. All rights reserved.
             </div>
             <div className="flex gap-4">
               <Link className="hover:text-foreground/90" href="/privacy">

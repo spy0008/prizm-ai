@@ -21,13 +21,13 @@ export const features = [
   },
   {
     title: "Fast setup",
-    desc: "Connect, open a PR, get review—fits your existing GitHub workflow.",
+    desc: "Connect, open a PR, get review fits your existing GitHub workflow.",
   },
 ];
 
 export const faqs = [
   {
-    q: "Does PRizmai replace human code review?",
+    q: "Does PRizm replace human code review?",
     a: "No. It reduces review load and catches issues early, while humans focus on architecture and product decisions.",
   },
   {
@@ -40,7 +40,7 @@ export const faqs = [
   },
   {
     q: "Is it suitable for businesses?",
-    a: "Yes—designed for teams who need faster review cycles and consistent quality across repos.",
+    a: "Yes designed for teams who need faster review cycles and consistent quality across repos.",
   },
 ];
 
@@ -48,12 +48,12 @@ export const howtouse = [
   {
     step: "01",
     title: "Connect your repo",
-    desc: "Install PRizmai for your org/repo and choose when it should review.",
+    desc: "PRizm for your org/repo and choose when it should review.",
   },
   {
     step: "02",
     title: "Open a PR",
-    desc: "PRizmai analyzes the diff and adds a summary + prioritized feedback.",
+    desc: "PRizm analyzes the diff and adds a summary + prioritized feedback.",
   },
   {
     step: "03",

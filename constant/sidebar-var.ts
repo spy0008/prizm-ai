@@ -1,4 +1,4 @@
-import { Github, LayoutDashboard, Settings, Banknote,FileCheck } from "lucide-react";
+import { LayoutDashboard, Settings, Banknote,FileCheck, GitBranch } from "lucide-react";
 
 export const navigationItems = [
     {
@@ -9,7 +9,7 @@ export const navigationItems = [
     {
         title: "Repository",
         url: "/dashboard/repository",
-        icon: Github,
+        icon: GitBranch,
     },
     {
         title: "Reviews",

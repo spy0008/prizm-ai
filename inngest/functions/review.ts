@@ -51,7 +51,7 @@ export const generateReview = inngest.createFunction(
     });
 
     const review = await step.run("generate-ai-review", async () => {
-      const prompt = `You are an expert code reviewer for PRizmAI. Provide a professional, actionable review.
+      const prompt = `You are an expert code reviewer for PRizm. Provide a professional, actionable review.
 
 PR TITLE: ${title}
 DESCRIPTION: ${description || "No description"}
