@@ -1,5 +1,10 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', '@prisma/adapter-pg'],
+  },
+  // Prisma Turbopack fix
+  transpilePackages: ['@prisma/client'],
+};
 
-const nextConfig: NextConfig = {};
-
-export default nextConfig;
+module.exports = nextConfig;
