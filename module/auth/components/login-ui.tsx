@@ -14,7 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Logo from "@/components/logo";
 
-export const metadata = { title: "Login — PRizm" };
+export const metadata = { title: "Login — PRizma" };
 
 const LoginUI = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -285,7 +285,7 @@ export async function postReviewComment({
 }: postReviewCommentType) {
   const octokit = new Octokit({ 
     auth: token,
-    userAgent: 'PRizmAI/1.0.0'
+    userAgent: 'PRizm/1.0.0'
   });
 
   try {
@@ -293,7 +293,7 @@ export async function postReviewComment({
       owner,
       repo,
       issue_number: prNumber,
-      body: `##  PRizm AI Code Review\n\n${review}\n\n---\n*Powered by PRizm*`
+      body: `##  PRizm AI Code Review\n\n${review}\n\n---\n*Powered by PRizmai*`
     });
   } catch (error) {
     console.error("postReviewComment API error:", {

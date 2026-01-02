@@ -10,7 +10,7 @@ export default function ContactPage() {
   const supportEmail = "support@PRizm.com";
   const subject = encodeURIComponent("PRizm Support");
   const body = encodeURIComponent(
-    "Hi PRizmai Support,\n\nRepo (optional):\nPR link (optional):\nIssue:\n\nThanks!"
+    "Hi PRizm Support,\n\nRepo (optional):\nPR link (optional):\nIssue:\n\nThanks!"
   );
 
   return (

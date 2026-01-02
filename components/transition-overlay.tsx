@@ -16,7 +16,7 @@ export function TransitionOverlay({ children }: { children: React.ReactNode }) {
     <div className="relative">
       <div>{children}</div>
 
-     {/* a overlay top of the page */}
+     
       <motion.div
         key={key}
         className="pointer-events-none fixed inset-0 z-9999 bg-background"

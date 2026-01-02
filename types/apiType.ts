@@ -86,3 +86,30 @@ export interface userLimits {
     };
   };
 }
+
+export interface subscriptionData {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    subscriptionTier: string;
+    subscriptionStatus: string | null;
+    polarCustomerId: string | null;
+    polarSubscriptionId: string | null;
+  } | null;
+  limits: {
+    tier: subscriptionTierType;
+    repositories: {
+      current: number;
+      limit: number | null; // null = unlimited
+      canAdd: boolean;
+    };
+    reviews: {
+      [repositoryId: string]: {
+        current: number;
+        limit: number | null; // null = unlimited
+        canAdd: boolean;
+      };
+    };
+  } | null;
+}
