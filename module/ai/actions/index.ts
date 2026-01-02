@@ -1,13 +1,16 @@
 "use server";
 
 import { inngest } from "@/inngest/client";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { proReviewLimiter, reviewLimiter } from "@/lib/rate-limit";
 import { getPullRequestDiff } from "@/module/github/lib/github";
 import {
   canCreateReview,
   incrementReviewCount,
 } from "@/module/payment/lib/subscription";
 import { reviewPullRequestType } from "@/types/apiType";
+import { headers } from "next/headers";
 
 export async function reviewPullRequest({
   owner,
@@ -15,6 +18,33 @@ export async function reviewPullRequest({
   prNumber,
 }: reviewPullRequestType) {
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user?.id) throw new Error("Unauthorized");
+
+    const userId = session.user.id;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscriptionTier: true },
+    });
+
+    const isPro = user?.subscriptionTier === "PRO";
+    const limiter = isPro ? proReviewLimiter : reviewLimiter;
+
+    const { success, remaining, retryAfter } = await limiter(
+      `${userId}:review`
+    );
+
+    if (!success) {
+      throw new Error(
+        isPro
+          ? `Rate limited. Retry in ${retryAfter}s`
+          : `Review limit (${
+              20 - remaining
+            }/hour). Pro: 500/hour. Retry in ${retryAfter}s`
+      );
+    }
+
     const repository = await prisma.repository.findFirst({
       where: {
         owner,
@@ -83,6 +113,7 @@ export async function reviewPullRequest({
     return {
       success: true,
       message: "Review Queued",
+      rateLimit: { remaining, isPro },
     };
   } catch (error) {
     try {
