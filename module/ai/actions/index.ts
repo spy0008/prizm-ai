@@ -16,12 +16,18 @@ export async function reviewPullRequest({
   owner,
   repo,
   prNumber,
+  userId: passedUserId,
 }: reviewPullRequestType) {
   try {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user?.id) throw new Error("Unauthorized");
+    let userId: string;
 
-    const userId = session.user.id;
+    if (!passedUserId) {
+      const session = await auth.api.getSession({ headers: await headers() });
+      if (!session?.user?.id) throw new Error("Unauthorized");
+      userId = session.user.id;
+    } else {
+      userId = passedUserId;
+    }
 
     const user = await prisma.user.findUnique({
       where: { id: userId },

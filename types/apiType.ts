@@ -50,6 +50,7 @@ export type reviewPullRequestType = {
   owner: string;
   repo: string;
   prNumber: number;
+  userId?: string;
 };
 
 export type getPullRequestDiffType = {
