@@ -25,6 +25,8 @@ export const auth = betterAuth({
       scope: ["repo"],
     },
   },
+  baseURL: process.env.NEXT_PUBLIC_APP_BASE_URL!,
+  trustHost: true,
   trustedOrigins: ["https://prizm-ai.vercel.app","http://localhost:3000"],
   plugins: [
     polar({
