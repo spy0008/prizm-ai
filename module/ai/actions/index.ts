@@ -15,7 +15,7 @@ export async function reviewPullRequest({
   prNumber,
 }: reviewPullRequestType) {
   try {
-    const repository = await prisma.repository.findFirst({
+    const dbRepository = await prisma.repository.findFirst({
       where: {
         owner,
         name: repo,
@@ -34,13 +34,13 @@ export async function reviewPullRequest({
     });
 
 
-    if (!repository) {
+    if (!dbRepository) {
       throw new Error(
         `Repository ${owner}/${repo} not found in database. Please reconnect the repository`
       );
     }
 
-    const canReview = await canCreateReview(repository.user.id, repository.id);
+    const canReview = await canCreateReview(dbRepository.user.id, dbRepository.id);
 
     if (!canReview) {
       throw new Error(
@@ -48,7 +48,7 @@ export async function reviewPullRequest({
       );
     }
 
-    const githubAccount = repository.user.accounts[0];
+    const githubAccount = dbRepository.user.accounts[0];
 
     if (!githubAccount || !githubAccount.accessToken) {
       throw new Error(`No Github access token found for repository owner!!!`);
@@ -75,11 +75,11 @@ export async function reviewPullRequest({
         owner,
         repo,
         prNumber,
-        userId: repository.user.id,
+        userId: dbRepository.user.id,
       },
     });
 
-    await incrementReviewCount(repository.user.id, repository.id);
+    await incrementReviewCount(dbRepository.user.id, dbRepository.id);
 
     return {
       success: true,
@@ -87,14 +87,14 @@ export async function reviewPullRequest({
     };
   } catch (error) {
     try {
-      const repository = await prisma.repository.findFirst({
+      const errorRepository = await prisma.repository.findFirst({
         where: { owner, name: repo },
       });
 
-      if (repository) {
+      if (errorRepository) {
         await prisma.review.create({
           data: {
-            repositoryId: repository.id,
+            repositoryId: errorRepository.id,
             prNumber,
             prTitle: "Failed to fetch PR",
             prUrl: `https://github.com/${owner}/${repo}/pull/${prNumber}`,

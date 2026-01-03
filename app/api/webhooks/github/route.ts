@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
       const repo = body.repository.full_name;
       const prNumber = body.pull_request?.number;
 
+      if (!prNumber) return NextResponse.json({ message: 'No PR number' }, { status: 200 });
+
       const [owner, repoName] = repo.split("/");
 
       if (action === "opened" || action === "synchronize") {
