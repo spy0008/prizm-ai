@@ -25,20 +25,11 @@ export async function POST(req: NextRequest) {
 
       const [owner, repoName] = repo.split("/");
 
-      const repository = await prisma.repository.findFirst({
-        where: { owner, name: repo },
-        select: { id: true, userId: true }, // Just need userId!
-      });
-
-      if (!repository)
-        return NextResponse.json({ error: "Repo not connected" });
-
       if (action === "opened" || action === "synchronize") {
         reviewPullRequest({
           owner,
           repo: repoName,
           prNumber: prNumber,
-          userId: repository.userId,
         })
           .then(() => console.log(`review completed for ${repo} #${prNumber}`))
           .catch((error) =>
