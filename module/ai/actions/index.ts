@@ -2,7 +2,6 @@
 
 import { inngest } from "@/inngest/client";
 import prisma from "@/lib/db";
-import { proReviewLimiter, reviewLimiter } from "@/lib/rate-limit";
 import { getPullRequestDiff } from "@/module/github/lib/github";
 import {
   canCreateReview,
@@ -34,27 +33,6 @@ export async function reviewPullRequest({
       },
     });
 
-    const user = await prisma.user.findUnique({
-      where: { id: repository?.user.id },
-      select: { subscriptionTier: true, id: true },
-    });
-
-    const isPro = user?.subscriptionTier === "PRO";
-    const limiter = isPro ? proReviewLimiter : reviewLimiter;
-
-    const { success, remaining, retryAfter } = await limiter(
-      `${user?.id}:review`
-    );
-
-    if (!success) {
-      throw new Error(
-        isPro
-          ? `Rate limited. Retry in ${retryAfter}s`
-          : `Review limit (${
-              20 - remaining
-            }/hour). Pro: 500/hour. Retry in ${retryAfter}s`
-      );
-    }
 
     if (!repository) {
       throw new Error(
@@ -106,7 +84,6 @@ export async function reviewPullRequest({
     return {
       success: true,
       message: "Review Queued",
-      rateLimit: { remaining, isPro },
     };
   } catch (error) {
     try {

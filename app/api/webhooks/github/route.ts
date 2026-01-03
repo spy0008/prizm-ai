@@ -1,5 +1,4 @@
-import prisma from "@/lib/db";
-import { reviewPullRequest } from "@/module/ai/actions";
+import { reviewPullRequest } from "@/module/ai/actions/index";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
