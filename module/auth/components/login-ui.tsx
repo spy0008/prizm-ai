@@ -14,7 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Logo from "@/components/logo";
 
-export const metadata = { title: "Login — PRizma" };
+export const metadata = { title: "Login — PRizm" };
 
 const LoginUI = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +71,7 @@ const LoginUI = () => {
             <CardContent className="space-y-4">
               <Button disabled={isLoading} onClick={handleGithubLogin} className="w-full cursor-pointer" asChild>
                 <span >
-                  <Github className="mr-2 h-4 w-4" />
+                  <Github className="mr-2 h-4 w-4 animate-pulse" />
                 { isLoading ? "Signing..." : "Sign in with GitHub"}
                 </span>
               </Button>
