@@ -23,6 +23,7 @@ export const auth = betterAuth({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       scope: ["repo"],
+      refreshToken: true,
     },
   },
    baseURL: process.env.BETTER_AUTH_URL,
