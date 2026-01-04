@@ -69,6 +69,8 @@ export async function reviewPullRequest({
 
     const { title } = pullRequestData;
 
+    console.log(`🔍 reviewPullRequest: ${owner}/${repo}#${prNumber}, userId: ${dbRepository.user.id}, canReview: ${canReview}`);
+
     await inngest.send({
       name: "pr.review.requested",
       data: {
