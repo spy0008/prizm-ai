@@ -63,8 +63,8 @@ export default function TermsPage() {
             <h2 className="text-base font-semibold">Contact</h2>
             <p className="text-muted-foreground">
               For questions about these Terms, email{" "}
-              <Link className="underline underline-offset-4" href="mailto:support@PRizm.com">
-                support@PRizm.com
+              <Link className="underline underline-offset-4" href="mailto:prizmaiport@gmail.com">
+                prizmaiport@gmail.com
               </Link>
               .
             </p>

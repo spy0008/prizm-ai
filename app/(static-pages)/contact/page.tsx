@@ -7,7 +7,7 @@ import Logo from "@/components/logo";
 export const metadata = { title: "Contact Support — PRizm" };
 
 export default function ContactPage() {
-  const supportEmail = "support@PRizm.com";
+  const supportEmail = "prizmaiport@gmail.com";
   const subject = encodeURIComponent("PRizm Support");
   const body = encodeURIComponent(
     "Hi PRizm Support,\n\nRepo (optional):\nPR link (optional):\nIssue:\n\nThanks!"
