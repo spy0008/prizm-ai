@@ -7,7 +7,6 @@ import { retrieveContent } from "@/module/ai/lib/rag";
 import { google } from "@ai-sdk/google";
 import prisma from "@/lib/db";
 import { generateText } from "ai";
-import { proReviewLimiter, reviewLimiter } from "@/lib/rate-limit";
 
 export const generateReview = inngest.createFunction(
   { id: "generate-review", concurrency: 5 },
@@ -16,30 +15,69 @@ export const generateReview = inngest.createFunction(
   async ({ event, step }) => {
     const { owner, repo, prNumber, userId } = event.data;
 
-    const rateLimitResult = await step.run("check-rate-limit", async () => {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { subscriptionTier: true },
-      });
-      const isPro = user?.subscriptionTier === "PRO";
-      return {
-        isPro,
-        limiter: isPro ? proReviewLimiter : reviewLimiter,
-      } as { isPro: boolean; limiter: typeof reviewLimiter };
-    });
-
-    const { limiter } = rateLimitResult as {
-      isPro: boolean;
-      limiter: typeof reviewLimiter;
+    type RateLimitRecord = {
+      count: number;
+      resetTime: number;
     };
+
+    const rateLimits = new Map<string, RateLimitRecord>();
+
+
+    const applyLimit = async (
+      identifier: string,
+      maxRequests: number,
+      windowMs: number = 3600000
+    ): Promise<{
+      success: boolean;
+      remaining: number;
+      retryAfter?: number;
+    }> => {
+      const now = Date.now();
+      const windowKey = `${identifier}:${
+        Math.floor(now / windowMs) * windowMs
+      }`;
+
+      let record = rateLimits.get(windowKey);
+      if (!record || now > record.resetTime) {
+        record = { count: 1, resetTime: now + windowMs };
+      } else {
+        record.count++;
+      }
+
+      rateLimits.set(windowKey, record);
+
+      setTimeout(() => rateLimits.delete(windowKey), windowMs);
+
+      if (record.count > maxRequests) {
+        return {
+          success: false,
+          remaining: 0,
+          retryAfter: Math.ceil((record.resetTime - now) / 1000),
+        };
+      }
+
+      return { success: true, remaining: maxRequests - record.count };
+    };
+
+    const user = await step.run(
+      "check-user-tier",
+      async () =>
+        await prisma.user.findUnique({
+          where: { id: userId },
+          select: { subscriptionTier: true },
+        })
+    );
+
+    const isPro = user?.subscriptionTier === "PRO";
+    const maxReviews = isPro ? 500 : 10;
 
     const { success, retryAfter } = await step.run(
       "apply-rate-limit",
-      async () => await limiter(`${userId}:review`)
+      async () =>
+        await applyLimit(`${userId}:review:${owner}/${repo}`, maxReviews)
     );
 
     if (!success) {
-      console.log(`⏳ Rate limited ${userId}: retry in ${retryAfter}s`);
       throw new Error(`Rate limited. Retry in ${retryAfter}s`);
     }
 
