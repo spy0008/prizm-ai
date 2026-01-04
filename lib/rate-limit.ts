@@ -3,6 +3,16 @@ interface RateLimitRecord {
   resetTime: number;
 }
 
+export interface RateLimitCheck {
+  isPro: boolean;
+  limiter: (id: string) => Promise<{
+    success: boolean;
+    remaining: number;
+    retryAfter?: number;
+  }>;
+}
+
+
 const rateLimits = new Map<string, RateLimitRecord>();
 
 export function createRateLimiter(maxRequests: number, windowMs: number = 3600000) {
@@ -42,7 +52,7 @@ export function createRateLimiter(maxRequests: number, windowMs: number = 360000
 }
 
 
-export const repoLimiter = createRateLimiter(5, 3600000);   // Free: 5 repos/hour
-export const reviewLimiter = createRateLimiter(20, 3600000); // Free: 20 reviews/hour
+export const repoLimiter = createRateLimiter(3, 3600000);   // Free: 5 repos/hour
+export const reviewLimiter = createRateLimiter(10, 3600000); // Free: 20 reviews/hour
 export const proRepoLimiter = createRateLimiter(100, 3600000);  // Pro: 100/hour
 export const proReviewLimiter = createRateLimiter(500, 3600000); // Pro: 500/hour

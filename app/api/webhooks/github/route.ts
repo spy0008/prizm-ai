@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const event = req.headers.get("x-github-event");
-    console.log(`🌐 Webhook: ${event}, action: ${body.action}, repo: ${body.repository?.full_name}, pr: ${body.pull_request?.number}`);
+    
 
     if (event === "ping") {
       console.log("🏓 Ping received");

@@ -7,6 +7,7 @@ import { retrieveContent } from "@/module/ai/lib/rag";
 import { google } from "@ai-sdk/google";
 import prisma from "@/lib/db";
 import { generateText } from "ai";
+import { proReviewLimiter, reviewLimiter } from "@/lib/rate-limit";
 
 export const generateReview = inngest.createFunction(
   { id: "generate-review", concurrency: 5 },
@@ -14,6 +15,33 @@ export const generateReview = inngest.createFunction(
 
   async ({ event, step }) => {
     const { owner, repo, prNumber, userId } = event.data;
+
+    const rateLimitResult = await step.run("check-rate-limit", async () => {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { subscriptionTier: true },
+      });
+      const isPro = user?.subscriptionTier === "PRO";
+      return {
+        isPro,
+        limiter: isPro ? proReviewLimiter : reviewLimiter,
+      } as { isPro: boolean; limiter: typeof reviewLimiter };
+    });
+
+    const { limiter } = rateLimitResult as {
+      isPro: boolean;
+      limiter: typeof reviewLimiter;
+    };
+
+    const { success, retryAfter } = await step.run(
+      "apply-rate-limit",
+      async () => await limiter(`${userId}:review`)
+    );
+
+    if (!success) {
+      console.log(`⏳ Rate limited ${userId}: retry in ${retryAfter}s`);
+      throw new Error(`Rate limited. Retry in ${retryAfter}s`);
+    }
 
     const { diff, title, description, token } = await step.run(
       "fetch-pr-data",
