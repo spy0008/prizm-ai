@@ -63,7 +63,7 @@ const subscriptionPage = () => {
     if (!data?.limits?.repositories?.limit) return 0;
     return Math.min(
       (data.limits.repositories.current / data.limits.repositories.limit) * 100,
-      100
+      100,
     );
   }, [data?.limits?.repositories?.current, data?.limits?.repositories?.limit]);
 

@@ -1,75 +1,137 @@
-// app/privacy/page.tsx
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Logo from "@/components/logo";
+"use client";
 
-export const metadata = { title: "Privacy — PRizm" };
+import Link from "next/link";
+
+import Logo from "@/components/logo";
+import GlassCard from "@/components/ui/GlassCard";
+import AnimatedBackground from "@/components/ui/AnimatedBackground";
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="border-b bg-background/80 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Logo/>
-          <Link className="text-sm text-muted-foreground hover:text-foreground" href="/terms">
+    <main className="relative min-h-screen text-white overflow-hidden">
+
+      {/* Background */}
+      <AnimatedBackground />
+
+      {/* Header */}
+      <header className="fixed top-0 z-40 w-full bg-black/40 backdrop-blur-xl border-b border-white/10">
+        <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+
+          <Logo />
+
+          <Link
+            className="text-sm text-white/60 hover:text-white"
+            href="/terms"
+          >
             Terms
           </Link>
+
         </div>
       </header>
 
-      <section className="px-6 py-14 md:py-20">
-        <div className="mx-auto w-full max-w-3xl space-y-6">
+      {/* Content */}
+      <section className="pt-40 pb-32 px-6">
+
+        <div className="mx-auto max-w-3xl space-y-10">
+
+          {/* Title */}
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl">Privacy Policy</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Effective date: Dec 13, 2025</p>
-          </div>
+            <h1 className="text-3xl md:text-4xl font-bold">
+              Privacy Policy
+            </h1>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">What this covers</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 text-sm text-muted-foreground">
-              <p>
-                This policy explains what data is collected, why it&apos;s collected, and how to contact support with privacy
-                questions.
-              </p>
-              <p>
-                This is a starter template and should be finalized with legal review and based on your actual data flows.
-              </p>
-            </CardContent>
-          </Card>
-
-          <div className="space-y-4 text-sm leading-relaxed">
-            <h2 className="text-base font-semibold">Data collected</h2>
-            <ul className="list-disc pl-5 text-muted-foreground">
-              <li>GitHub identity basics (e.g., user id/username) needed for login.</li>
-              <li>Repository metadata you authorize (e.g., repo name, PR identifiers).</li>
-              <li>Operational data (logs, error reports) for reliability and security.</li>
-            </ul>
-
-            <h2 className="text-base font-semibold">How data is used</h2>
-            <ul className="list-disc pl-5 text-muted-foreground">
-              <li>To provide PR review automation and related features.</li>
-              <li>To secure the service, prevent abuse, and debug issues.</li>
-              <li>To improve product quality and performance.</li>
-            </ul>
-
-            <h2 className="text-base font-semibold">Data retention</h2>
-            <p className="text-muted-foreground">
-              Retention periods depend on product configuration and legal requirements. Limit retention where possible.
-            </p>
-
-            <h2 className="text-base font-semibold">Contact</h2>
-            <p className="text-muted-foreground">
-              Privacy questions:{" "}
-              <Link className="underline underline-offset-4" href="mailto:prizmaiport@gmail.com">
-                prizmaiport@gmail.com
-              </Link>
-              .
+            <p className="mt-2 text-white/60 text-sm">
+              Effective date: Dec 13, 2025
             </p>
           </div>
+
+          {/* Overview */}
+          <GlassCard>
+
+            <h2 className="text-lg font-semibold mb-3">
+              Plain-Language Overview
+            </h2>
+
+            <div className="space-y-3 text-sm text-white/70 leading-relaxed">
+
+              <p>
+                This policy explains what data is collected, why it&apos;s
+                collected, and how it is used.
+              </p>
+
+              <p>
+                This is a starter template and should be reviewed by
+                legal counsel before production use.
+              </p>
+
+            </div>
+
+          </GlassCard>
+
+          {/* Sections */}
+          <div className="space-y-8 text-sm leading-relaxed">
+
+            {/* Data */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">
+                Data Collected
+              </h2>
+
+              <ul className="list-disc pl-5 space-y-2 text-white/70">
+                <li>GitHub username and profile data</li>
+                <li>Repository and PR metadata</li>
+                <li>System logs and error reports</li>
+              </ul>
+            </div>
+
+            {/* Usage */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">
+                How We Use Data
+              </h2>
+
+              <ul className="list-disc pl-5 space-y-2 text-white/70">
+                <li>To provide automation services</li>
+                <li>To improve security</li>
+                <li>To enhance performance</li>
+              </ul>
+            </div>
+
+            {/* Retention */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">
+                Data Retention
+              </h2>
+
+              <p className="text-white/70">
+                Data is retained only as long as necessary
+                for service operation.
+              </p>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">
+                Contact
+              </h2>
+
+              <p className="text-white/70">
+                Privacy questions:{" "}
+                <Link
+                  href="mailto:prizmaiport@gmail.com"
+                  className="text-cyan-400 underline underline-offset-4 hover:text-cyan-300"
+                >
+                  prizmaiport@gmail.com
+                </Link>
+              </p>
+            </div>
+
+          </div>
+
         </div>
+
       </section>
+
     </main>
   );
 }
