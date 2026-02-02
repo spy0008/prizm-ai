@@ -1,117 +1,175 @@
 "use client";
+
 import { signIn } from "@/lib/auth-client";
 import Link from "next/link";
 import { useState } from "react";
 import { Github } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import Logo from "@/components/logo";
 
-export const metadata = { title: "Login — PRizm" };
+import GlassCard from "@/components/ui/GlassCard";
+import AnimatedBackground from "@/components/ui/AnimatedBackground";
 
-const LoginUI = () => {
+export const metadata = {
+  title: "Login — PRizm",
+};
+
+export default function LoginUI() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGithubLogin = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
+
     try {
       await signIn.social({
         provider: "github",
       });
     } catch (error) {
       console.error("Login error", error);
+      setIsLoading(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
-          <Logo/>
+    <main className="relative min-h-screen text-white overflow-hidden">
 
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" asChild>
-              <Link href="/">Home</Link>
-            </Button>
-            <Button variant="secondary" asChild>
-              <Link href="/#features">Features</Link>
-            </Button>
+      {/* Background */}
+      <AnimatedBackground />
+
+      {/* Header */}
+      <header className="fixed top-0 z-40 w-full bg-black/40 backdrop-blur-xl border-b border-white/10">
+
+        <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+
+          <Logo />
+
+          <div className="flex items-center gap-3 text-sm">
+
+            <Link
+              href="/"
+              className="text-white/60 hover:text-white"
+            >
+              Home
+            </Link>
+
+            <Link
+              href="/#features"
+              className="text-white/60 hover:text-white"
+            >
+              Features
+            </Link>
+
           </div>
         </div>
       </header>
 
-  
-      <section className="px-6 py-14 md:py-20">
-        <div className="mx-auto grid w-full max-w-md gap-6">
-          <div className="space-y-2">
-            <h1 className="text-2xl font-extrabold tracking-tight md:text-3xl">
-              Sign in
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Use GitHub to continue. No passwords, no extra accounts.
+      {/* Content */}
+      <section className="pt-40 pb-32 px-6">
+
+        <div className="mx-auto max-w-md space-y-8">
+
+          {/* Title */}
+          <div className="text-center space-y-2">
+
+            <p className="text-green-400 font-mono text-xs">
+              &gt; Authentication Gateway
             </p>
+
+            <h1 className="text-3xl md:text-4xl font-bold">
+              Sign In to PRizm
+            </h1>
+
+            <p className="text-white/60 text-sm">
+              Secure GitHub OAuth. No passwords stored.
+            </p>
+
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Continue with GitHub</CardTitle>
-              <CardDescription>
-                Connect your GitHub account to manage repos and PR review
-                settings.
-              </CardDescription>
-            </CardHeader>
+          {/* Login Card */}
+          <GlassCard>
 
-            <CardContent className="space-y-4">
-              <Button disabled={isLoading} onClick={handleGithubLogin} className="w-full cursor-pointer" asChild>
-                <span >
-                  <Github className="mr-2 h-4 w-4 animate-pulse" />
-                { isLoading ? "Signing..." : "Sign in with GitHub"}
-                </span>
-              </Button>
+            <div className="space-y-6">
 
-              <div className="relative py-1">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator />
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-background px-2 text-xs text-muted-foreground">
-                    Secure OAuth sign-in
-                  </span>
-                </div>
+              {/* Info */}
+              <div className="space-y-1">
+
+                <h2 className="font-semibold">
+                  Continue with GitHub
+                </h2>
+
+                <p className="text-sm text-white/60">
+                  Connect your repositories and enable AI PR reviews.
+                </p>
+
               </div>
 
-              <p className="text-xs text-muted-foreground">
-                By continuing, you agree to the{" "}
-                <Link className="underline underline-offset-4" href="/terms">
+              {/* Button */}
+              <Button
+                disabled={isLoading}
+                onClick={handleGithubLogin}
+                size="lg"
+                className="w-full"
+              >
+                <Github className="mr-2 h-4 w-4" />
+
+                {isLoading ? "Authorizing..." : "Sign in with GitHub"}
+              </Button>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 text-xs text-white/40">
+
+                <span className="flex-1 h-px bg-white/10" />
+                Secure OAuth
+                <span className="flex-1 h-px bg-white/10" />
+
+              </div>
+
+              {/* Terms */}
+              <p className="text-xs text-white/50 text-center leading-relaxed">
+
+                By continuing, you agree to our{" "}
+
+                <Link
+                  href="/terms"
+                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4"
+                >
                   Terms
                 </Link>{" "}
                 and{" "}
-                <Link className="underline underline-offset-4" href="/privacy">
+
+                <Link
+                  href="/privacy"
+                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4"
+                >
                   Privacy Policy
                 </Link>
                 .
-              </p>
-            </CardContent>
-          </Card>
 
-          <p className="text-xs text-muted-foreground">
+              </p>
+
+            </div>
+
+          </GlassCard>
+
+          {/* Help */}
+          <p className="text-xs text-center text-white/50">
+
             Trouble signing in?{" "}
-            <Link className="underline underline-offset-4" href="/contact">
+
+            <Link
+              href="/contact"
+              className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4"
+            >
               Contact support
             </Link>
-            .
+
           </p>
+
         </div>
+
       </section>
+
     </main>
   );
-};
-
-export default LoginUI;
+}

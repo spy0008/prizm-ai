@@ -1,4 +1,5 @@
 "use client";
+
 import Header from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { ExternalLink, Star, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import AnimatedBackground from "@/components/ui/AnimatedBackground";
 
 interface Repository {
   id: number;
@@ -81,26 +83,7 @@ const RepositoryPage = () => {
     return () => clearTimeout(timeout);
   }, [searchQuery]);
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Repositories</h1>
-          <p className="text-muted-foreground">
-            Manage and checkout all your Github Repositories:
-          </p>
-        </div>
-        <RepositoryListSkeleton />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return <div>Failed to load your repositories.</div>;
-  }
-
   const allRepositories = data?.pages.flatMap((page) => page) || [];
-
   const filteredRepositories = allRepositories.filter((repo: Repository) =>
     debouncedQuery
       ? repo.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
@@ -120,8 +103,9 @@ const RepositoryPage = () => {
       {
         onSuccess: (data) => {
           toast.success(
-            `✅ ${repo.name} connected! 
-           ${data?.rateLimit?.remaining ?? "?"} left this hour`
+            `✅ ${repo.name} connected! ${
+              data?.rateLimit?.remaining ?? "?" 
+            } left this hour`
           );
         },
         onError: (error: any) => {
@@ -142,94 +126,126 @@ const RepositoryPage = () => {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+        <AnimatedBackground />
+        <div className="relative z-10 space-y-4 px-6 md:px-12">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Repositories</h1>
+            <p className="text-muted-foreground">
+              Manage and checkout all your Github Repositories:
+            </p>
+          </div>
+          <RepositoryListSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>Failed to load your repositories.</div>;
+  }
+
   return (
-    <div className="space-y-4">
-      <Header
-        title="Repositories"
-        description="Manage and checkout all your Github Repositories:"
-      />
+    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
 
-      <div className="relative">
-        <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
-        <Input
-          placeholder="Search your repositorie..."
-          className="pl-8 w-fit"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+      {/* Animated Grid Background */}
+      <AnimatedBackground />
+
+      {/* Content */}
+      <div className="relative z-10 space-y-4 px-6 md:px-12">
+
+        <Header
+          title="Repositories"
+          description="Manage and checkout all your Github Repositories:"
         />
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        {filteredRepositories.map((repo: Repository) => (
-          <Card key={repo.id} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-2 flex-1">
-                  <div className="flex items-center gap-2">
-                    <CardTitle className="text-lg">{repo.name}</CardTitle>
-                    <Badge variant="outline">
-                      {repo.language || "Unknown"}
-                    </Badge>
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search your repositories..."
+            className="pl-8 w-fit"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {/* Repository List */}
+        <div className="grid md:grid-cols-2 gap-4">
+          {filteredRepositories.map((repo: Repository) => (
+            <Card key={repo.id} className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-lg">{repo.name}</CardTitle>
+                      <Badge variant="outline">
+                        {repo.language || "Unknown"}
+                      </Badge>
+                    </div>
+                    <CardDescription>{repo.description}</CardDescription>
                   </div>
-                  <CardDescription>{repo.description}</CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link
-                      href={repo.html_url}
-                      target="_blank"
-                      rel="noopener noreferror"
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link
+                        href={repo.html_url}
+                        target="_blank"
+                        rel="noopener noreferror"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      className="cursor-pointer"
+                      onClick={() => handleConnect(repo)}
+                      disabled={localConnectingId === repo.id || repo.isConnected}
+                      variant={repo.isConnected ? "outline" : "default"}
                     >
-                      <ExternalLink className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button
-                    className="cursor-pointer"
-                    onClick={() => handleConnect(repo)}
-                    disabled={localConnectingId === repo.id || repo.isConnected}
-                    variant={repo.isConnected ? "outline" : "default"}
-                  >
-                    {localConnectingId === repo.id
-                      ? "Connecting..."
-                      : repo.isConnected
-                      ? "Connected"
-                      : "Connect"}
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1">
-                    {repo.stargazers_count > 0 ? (
-                      <Star className="h-4 w-4 fill-primary text-primary" />
-                    ) : (
-                      <Star className="h-4 w-4 bg-transparent text-primary" />
-                    )}
-                    <span className="text-sm font-medium">
-                      {repo.stargazers_count}
-                    </span>
-                    {repo.isConnected && (
-                      <Badge variant="secondary">Connected</Badge>
-                    )}
+                      {localConnectingId === repo.id
+                        ? "Connecting..."
+                        : repo.isConnected
+                        ? "Connected"
+                        : "Connect"}
+                    </Button>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      {repo.stargazers_count > 0 ? (
+                        <Star className="h-4 w-4 fill-primary text-primary" />
+                      ) : (
+                        <Star className="h-4 w-4 bg-transparent text-primary" />
+                      )}
+                      <span className="text-sm font-medium">
+                        {repo.stargazers_count}
+                      </span>
+                      {repo.isConnected && (
+                        <Badge variant="secondary">Connected</Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      <div ref={observerTarget} className="py-4">
-        {isFetchingNextPage && <RepositoryListSkeleton />}
-        {!hasNextPage && allRepositories.length > 0 && (
-          <p className="text-center text-muted-foreground">
-            No More Repositories
-          </p>
-        )}
+        {/* Infinite Scroll */}
+        <div ref={observerTarget} className="py-4">
+          {isFetchingNextPage && <RepositoryListSkeleton />}
+          {!hasNextPage && allRepositories.length > 0 && (
+            <p className="text-center text-muted-foreground">
+              No More Repositories
+            </p>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 
